@@ -15,12 +15,12 @@
 | 領域 | 採用 | 備考 |
 |---|---|---|
 | 画面 | React + Vite + TypeScript | 静的にビルドする SPA。スマホ向けの PWA にする |
-| ホスティング | Cloudflare Pages | GitHub の `main` への push で、自動公開 |
+| ホスティング | Cloudflare Workers(静的ファイルの配信) | GitHub の `main` への push で、自動公開。設定は `app/wrangler.jsonc`。Root directory は `app` |
 | DB と認証 | Supabase(無料枠) | Postgres、Google ログイン、行ごとの権限(RLS) |
 | 書誌情報の取得 | Crossref など(DOI) | 取得できないときは手入力。詳細は 5 章 |
 | リポジトリ | GitHub `kanaami314/tsumuyomu` | 公開。秘密情報は、入れない |
 
-- 画面は、サーバーを持たない静的な SPA にする。サーバー側の処理が要るもの(共有用の画像など)は、あとから Cloudflare の Functions を足す。
+- 画面は、サーバーを持たない静的な SPA にする。サーバー側の処理が要るもの(共有用の画像など)は、あとから Cloudflare Workers の処理を足す。
 - 料金や無料枠の数字は、公開前に、公式の料金ページで確認する。
 
 ## 3. リポジトリの構成(案)
@@ -88,7 +88,7 @@ tsumuyomu/
 
 | 段階 | 内容 | 終わりの目安 |
 |---|---|---|
-| M0 準備 | `app/` の雛形、型チェックと整形、GitHub Actions、Cloudflare Pages の公開、Supabase のプロジェクト | `main` に push すると、公開先で、空の画面が見える |
+| M0 準備 | `app/` の雛形、型チェックと整形、GitHub Actions、Cloudflare の公開、Supabase のプロジェクト | `main` に push すると、公開先で、空の画面が見える |
 | M1 見た目の移植 | モックの見た目を、React の部品にする(書棚、ホーム、記録シート、タブバー)。データは、仮のもの | `design/mobile.html` と、ほぼ同じ見た目が、スマホで動く |
 | M2 ログインと招待 | Google ログイン、招待コード、ユーザー名、RLS | 招待コードのない人は、書き込めない。コードがある人は、登録できる |
 | M3 記録の中核 | DOI から取得、記録の作成・編集・削除、書棚に本物のデータを表示 | 記録して、書棚に背表紙が増える |
