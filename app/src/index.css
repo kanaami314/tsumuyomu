@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  background: #faf7f2;
+  color: #2b2620;
+}
+
+main {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
