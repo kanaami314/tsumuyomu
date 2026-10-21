@@ -1035,3 +1035,183 @@ button:focus-visible {
   color: #5e7064;
   text-decoration: underline;
 }
+
+/* 記録(M3) */
+button.lcover,
+button.sp,
+button.face {
+  font: inherit;
+  cursor: pointer;
+}
+
+button.sp {
+  border: 0;
+  padding: 12px 0 8px;
+}
+
+button.face {
+  border: 0;
+  text-align: left;
+}
+
+.quote .quiet {
+  color: #6f8175;
+  font-size: 13px;
+}
+
+.latest.empty {
+  text-align: center;
+}
+
+.latest.empty .quote {
+  margin-bottom: 18px;
+}
+
+.shelf-empty {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  padding: 36px 24px 0;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #46604f;
+  text-align: center;
+}
+
+.new-shelf {
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+
+.new-shelf input {
+  width: 9em;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--green);
+  background: rgba(255, 255, 255, 0.9);
+  font: inherit;
+  font-size: 16px;
+  color: var(--ink);
+  outline: none;
+}
+
+.new-shelf small {
+  margin-left: 6px;
+  font-size: 11px;
+  color: #b4443a;
+  white-space: nowrap;
+}
+
+.fld .paste {
+  flex: none;
+  background: #fff;
+  border: 1px solid #d9e6d6;
+  color: var(--green);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+.fld .paste:disabled,
+.fld input:disabled {
+  opacity: 0.5;
+}
+
+.hint {
+  margin: 0 0 9px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #5e7064;
+}
+
+.hint.warn {
+  color: #9a5a2e;
+}
+
+.manual-link {
+  display: block;
+  margin: 0 0 12px;
+  font-size: 12.5px;
+}
+
+.manual {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 9px;
+}
+
+.manual label {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 3px;
+  font-size: 11.5px;
+  color: #46604f;
+}
+
+.manual input {
+  min-width: 0;
+  padding: 9px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(214, 203, 176, 0.9);
+  background: rgba(255, 255, 255, 0.85);
+  font: inherit;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.manual-row {
+  display: flex;
+  gap: 8px;
+}
+
+.manual-row label:first-child {
+  flex: 0 0 5.5em;
+}
+
+.date {
+  display: block;
+  margin: 0 0 9px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(214, 203, 176, 0.7);
+  background: rgba(255, 255, 255, 0.72);
+  font: inherit;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.found .t {
+  word-break: break-word;
+}
+
+.danger {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: #6b4a44;
+}
+
+.danger .gate-link {
+  margin-top: 0;
+}
+
+.danger-yes {
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: #b4443a;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.save:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

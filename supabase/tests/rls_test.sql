@@ -212,6 +212,10 @@ begin
   perform t.as_user(b);
   insert into public.papers (doi, title) values ('10.1/q', '論文Q');
   perform t.eq('プロフィールのある人は論文を足せる', (select count(*) from public.papers)::int, 2);
+  perform t.throws('分野は決まった値だけ',
+    $q$insert into public.papers (doi, title, field) values ('10.1/f', '論文F', 'zz')$q$, 'check constraint');
+  insert into public.papers (doi, title, field) values ('10.1/g', '論文G', 'ml');
+  perform t.eq('分野を保存できる', (select field from public.papers where doi = '10.1/g'), 'ml');
   perform t.throws('プロフィールは消せない', $q$delete from public.profiles$q$, 'permission denied');
 end;
 $$;

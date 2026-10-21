@@ -1,10 +1,20 @@
 import Bookmarks from './Bookmarks'
-import { FIELD_COLORS, SAMPLE_LATEST } from '../lib/books'
+import { FIELD_COLORS, toBook } from '../lib/books'
+import { useRecords } from '../lib/RecordsContext'
 import { buildSpine } from '../lib/spine'
+import { countEntries, formatDay } from '../lib/stats'
 
-export default function HomeScreen() {
-  const { count, date, book, comment, rating } = SAMPLE_LATEST
-  const { ribbon } = buildSpine(book, 0)
+interface Props {
+  onRecord: () => void
+  onOpen: (entryId: string) => void
+}
+
+export default function HomeScreen({ onRecord, onOpen }: Props) {
+  const { entries, status } = useRecords()
+  const latest = entries.find((e) => e.status === 'done')
+  const book = latest ? toBook({ id: latest.id, rating: latest.rating, paper: latest.paper }) : null
+  const lines = latest?.comment?.split('\n').filter(Boolean) ?? []
+
   return (
     <section className="screen home" aria-label="ホーム">
       <div className="photo full" />
@@ -17,30 +27,45 @@ export default function HomeScreen() {
           <i className="ti ti-user" aria-hidden="true" />
         </span>
       </header>
-      <div className="latest">
-        <div className="lk">
-          <span>最近読んだ論文</span>
-          <span>
-            {count}本目　{date}
-          </span>
-        </div>
-        <div className="lcover" style={{ background: FIELD_COLORS[book.field] }}>
-          <span className="rb" style={{ background: ribbon }} />
-          <div className="lt">{book.title}</div>
-          <div className="la">
-            {book.authors}　{book.year}
-          </div>
-        </div>
-        <p className="quote">
-          {comment.map((line, i) => (
-            <span key={i}>
-              {i > 0 && <br />}
-              {line}
+      {latest && book ? (
+        <div className="latest">
+          <div className="lk">
+            <span>最近読んだ論文</span>
+            <span>
+              {countEntries(entries).total}本目　{formatDay(latest.read_on)}
             </span>
-          ))}
-        </p>
-        <Bookmarks value={rating} className="hs" />
-      </div>
+          </div>
+          <button type="button" className="lcover" style={{ background: FIELD_COLORS[book.field] }} onClick={() => onOpen(latest.id)}>
+            <span className="rb" style={{ background: buildSpine(book, 0).ribbon }} />
+            <span className="lt">{book.title}</span>
+            <span className="la">
+              {book.authors}　{book.year}
+            </span>
+          </button>
+          <p className="quote">
+            {lines.length > 0 ? (
+              lines.map((line, i) => (
+                <span key={i}>
+                  {i > 0 && <br />}
+                  {line}
+                </span>
+              ))
+            ) : (
+              <span className="quiet">ひとことは、まだありません。</span>
+            )}
+          </p>
+          <Bookmarks value={latest.rating ?? 0} className="hs" />
+        </div>
+      ) : (
+        <div className="latest empty">
+          <p className="quote">{status === 'loading' ? '読み込み中…' : 'まだ、1本も記録がありません。'}</p>
+          {status !== 'loading' && (
+            <button type="button" className="gate-button" onClick={onRecord}>
+              最初の1本を記録する
+            </button>
+          )}
+        </div>
+      )}
     </section>
   )
 }

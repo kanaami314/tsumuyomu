@@ -1,13 +1,8 @@
+import { authorLabel, shortTitle } from './biblio'
+
 export type Field = 'ml' | 'ls' | 'ps' | 'li' | 'ne' | 'ed' | 'st' | 'ma'
 
-export interface Book {
-  title: string
-  shortTitle: string
-  authors: string
-  year: number
-  field: Field
-  face?: boolean
-}
+export const FIELDS: Field[] = ['ml', 'ls', 'ps', 'li', 'ne', 'ed', 'st', 'ma']
 
 export const FIELD_COLORS: Record<Field, string> = {
   ml: '#5F86A3',
@@ -20,42 +15,38 @@ export const FIELD_COLORS: Record<Field, string> = {
   ma: '#7C8FA0',
 }
 
-// M3 で本物の記録に置き換えるまでの、表示確認用の仮データ
-export const SAMPLE_BOOKS: Book[] = [
-  { title: 'Attention Is All You Need', shortTitle: 'Attention Is All You Need', authors: 'Vaswani ほか', year: 2017, field: 'ml', face: true },
-  { title: 'The Spacing Effect in Learning', shortTitle: 'The Spacing Effect', authors: 'Cepeda ほか', year: 2006, field: 'ls' },
-  { title: 'Habit formation in everyday life', shortTitle: 'Habit formation', authors: 'Lally ほか', year: 2010, field: 'ps', face: true },
-  { title: 'Statistical learning by infants', shortTitle: 'Statistical learning', authors: 'Saffran ほか', year: 1996, field: 'li' },
-  { title: 'Sleep and memory consolidation', shortTitle: 'Sleep and memory', authors: 'Diekelmann ほか', year: 2013, field: 'ne' },
-  { title: 'Deep residual learning', shortTitle: 'Deep residual learning', authors: 'He ほか', year: 2016, field: 'ml' },
-  { title: 'The Magical Number Seven', shortTitle: 'Magical Number Seven', authors: 'Miller', year: 1956, field: 'ps' },
-  { title: 'Grit', shortTitle: 'Grit', authors: 'Duckworth ほか', year: 2007, field: 'ps' },
-  { title: 'BERT', shortTitle: 'BERT', authors: 'Devlin ほか', year: 2019, field: 'ml' },
-  { title: 'Testing effect and retention', shortTitle: 'Testing effect', authors: 'Roediger ほか', year: 2006, field: 'ed', face: true },
-  { title: 'Flow', shortTitle: 'Flow', authors: 'Csikszentmihalyi', year: 1990, field: 'ps' },
-  { title: 'Dropout', shortTitle: 'Dropout', authors: 'Srivastava ほか', year: 2014, field: 'ml' },
-  { title: 'Adam', shortTitle: 'Adam', authors: 'Kingma ほか', year: 2015, field: 'ml' },
-  { title: 'GAN', shortTitle: 'GAN', authors: 'Goodfellow ほか', year: 2014, field: 'ml' },
-  { title: 'Prospect theory', shortTitle: 'Prospect theory', authors: 'Kahneman ほか', year: 1979, field: 'ps', face: true },
-  { title: 'Self-determination theory', shortTitle: 'Self-determination', authors: 'Deci ほか', year: 2000, field: 'ed' },
-  { title: 'Mastering the game of Go', shortTitle: 'Mastering Go', authors: 'Silver ほか', year: 2016, field: 'ml' },
-  { title: 'Mirror neurons', shortTitle: 'Mirror neurons', authors: 'Rizzolatti ほか', year: 2004, field: 'ne' },
-]
-
-export interface Latest {
-  count: number
-  date: string
-  book: Book
-  comment: string[]
-  rating: number
+/** 背表紙・表紙に出す本の情報 */
+export interface Book {
+  id: string
+  title: string
+  shortTitle: string
+  authors: string
+  year: number | null
+  field: Field
+  face?: boolean
 }
 
-export const SAMPLE_LATEST: Latest = {
-  count: 87,
-  date: '10月20日',
-  book: SAMPLE_BOOKS[0],
-  comment: ['これが全部の始まりか、と思った。', '図が親切。'],
-  rating: 5,
+export interface BookSource {
+  id: string
+  rating: number | null
+  paper: { title: string; authors: string[]; year: number | null; field: Field | null }
 }
 
-export const SAMPLE_COUNTS = { total: 87, month: 5, days: 52 }
+function hashField(text: string): Field {
+  let h = 0
+  for (const ch of text) h = (h * 31 + ch.codePointAt(0)!) >>> 0
+  return FIELDS[h % FIELDS.length]
+}
+
+/** 刺さった度が 5 のものは、表紙を見せて飾る */
+export function toBook({ id, rating, paper }: BookSource): Book {
+  return {
+    id,
+    title: paper.title,
+    shortTitle: shortTitle(paper.title),
+    authors: authorLabel(paper.authors),
+    year: paper.year,
+    field: paper.field ?? hashField(paper.title),
+    face: rating === 5,
+  }
+}
