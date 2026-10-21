@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>論文棚 モック（ブクログ風の書棚）</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  *{box-sizing:border-box}
+  :root{--bg:#F2EBDD;--ink:#2B3A2F;--green:#2F6B4A}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif}
+  .page{max-width:900px;margin:0 auto;padding:0 20px 56px}
+  .nav{display:flex;justify-content:space-between;align-items:center;padding:20px 4px}
+  .logo{font-size:19px;font-weight:600;color:var(--green)}
+  .menu{display:flex;gap:6px;font-size:13px;color:#4A5E50}
+  .menu span{padding:7px 14px;border-radius:999px}
+  .menu .on{background:rgba(255,252,245,.8);border:1px solid #fff;color:var(--green)}
+  .profile{display:flex;align-items:center;gap:18px;padding:8px 4px 22px;flex-wrap:wrap}
+  .avatar{width:56px;height:56px;border-radius:50%;background:#CFE3CF;color:var(--green);display:flex;align-items:center;justify-content:center;font-size:24px;flex:none}
+  .pname{font-size:18px;font-weight:600}
+  .pbio{font-size:13px;color:#5E7064;margin-top:2px}
+  .counts{margin-left:auto;display:flex;gap:22px}
+  .counts div{text-align:center}
+  .counts b{display:block;font-size:24px;color:var(--green);font-weight:600}
+  .counts small{font-size:12px;color:#5E7064}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 4px 20px}
+  .chip{padding:6px 14px;border-radius:999px;font-size:13px;background:rgba(255,252,245,.8);border:1px solid #E3DDCB;color:var(--green)}
+  .chip.on{background:var(--green);color:#fff;border-color:var(--green)}
+  .chip.add{border-style:dashed;color:#6B7A6E;background:transparent}
+  .shelfbox{background:#EADFC8;border-radius:18px;padding:20px 20px 12px;box-shadow:inset 0 3px 10px rgba(90,70,40,.12)}
+  .row{display:grid;gap:14px;align-items:end;padding:0 6px}
+  .plank{height:16px;margin:0 -8px 22px;border-radius:3px;background:linear-gradient(#CDAA7E,#B58F63);box-shadow:0 5px 8px rgba(70,50,30,.22)}
+  .book{position:relative;height:158px;border-radius:3px 7px 7px 3px;padding:12px 10px 10px 16px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:inset 6px 0 0 rgba(0,0,0,.13),2px 3px 6px rgba(60,45,25,.28);overflow:hidden}
+  .book .tg{font-size:9.5px;letter-spacing:.02em;opacity:.85}
+  .book .bt{font-family:"Hiragino Mincho ProN","Yu Mincho",serif;font-size:13.5px;line-height:1.35;font-weight:700}
+  .book .au{font-size:10px;opacity:.85}
+  .book::after{content:"";position:absolute;right:-18px;top:-18px;width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.18)}
+  .m2::after{border-radius:0;transform:rotate(45deg);right:-26px}
+  .m3::after{width:100%;height:10px;right:0;top:46%;border-radius:0;background:rgba(255,255,255,.2)}
+  .m4::after{width:44px;height:44px;border-radius:50%;background:none;border:5px solid rgba(255,255,255,.22);right:-10px;top:auto;bottom:34px}
+  .add-book{height:158px;border:1.5px dashed #B5A584;border-radius:3px 7px 7px 3px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#7C6B4C;font-size:12px;gap:6px;text-align:center}
+  .add-book i{font-size:22px}
+  .note{font-size:12px;color:#7C8A7E;margin:14px 4px 0}
+  @media (max-width:560px){.counts{margin-left:0;width:100%;justify-content:space-between}}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="nav">
+    <span class="logo"><i class="ti ti-leaf"></i> 論文棚</span>
+    <span class="menu"><span>ホーム</span><span class="on">書棚</span><span>ふりかえり</span></span>
+  </div>
+  <div class="profile">
+    <div class="avatar"><i class="ti ti-user"></i></div>
+    <div><div class="pname">わたしの書棚</div><div class="pbio">毎日1本、ゆっくり読んでいます。</div></div>
+    <div class="counts">
+      <div><b>87</b><small>通算</small></div>
+      <div><b>5</b><small>今月</small></div>
+      <div><b>52</b><small>読んだ日</small></div>
+    </div>
+  </div>
+  <div class="chips">
+    <span class="chip on">すべて</span><span class="chip">じっくり読んだ</span><span class="chip">人に勧めたい</span><span class="chip">読みたい</span><span class="chip add">+ 棚を作る</span>
+  </div>
+  <div class="shelfbox" id="shelf"></div>
+  <p class="note">表紙のない論文は、タイトルと分野の色から「表紙風カード」を自動で作る想定です。</p>
+</div>
+<script>
+  var books=[
+    {t:"Attention Is All You Need",a:"Vaswani ほか 2017",g:"機械学習",c:"#6F9BB8",f:"#fff",m:"m1"},
+    {t:"The Spacing Effect in Learning",a:"Cepeda ほか 2006",g:"学習科学",c:"#8FB39A",f:"#1F3A2A",m:"m3"},
+    {t:"Habit formation in everyday life",a:"Lally ほか 2010",g:"心理学",c:"#E4C77E",f:"#4A3A10",m:"m4"},
+    {t:"Statistical learning by infants",a:"Saffran ほか 1996",g:"言語学",c:"#B79BB6",f:"#fff",m:"m2"},
+    {t:"Sleep and memory consolidation",a:"Diekelmann ほか 2013",g:"神経科学",c:"#D9967C",f:"#fff",m:"m1"},
+    {t:"Deep residual learning",a:"He ほか 2016",g:"機械学習",c:"#5F7F9C",f:"#fff",m:"m4"},
+    {t:"The Magical Number Seven",a:"Miller 1956",g:"心理学",c:"#E8D9B5",f:"#4A3F25",m:"m3"},
+    {t:"Grit: perseverance and passion",a:"Duckworth ほか 2007",g:"心理学",c:"#6E9A74",f:"#fff",m:"m2"},
+    {t:"BERT: pre-training of transformers",a:"Devlin ほか 2019",g:"機械学習",c:"#7FB3C4",f:"#16384A",m:"m1"},
+    {t:"Testing effect and retention",a:"Roediger ほか 2006",g:"学習科学",c:"#D9A5A5",f:"#4A2323",m:"m4"},
+    {t:"Flow in daily experience",a:"Csikszentmihalyi 1990",g:"心理学",c:"#9BA9B8",f:"#1F2D3D",m:"m3"}
+  ];
+  function render(){
+    var box=document.getElementById('shelf');
+    var w=box.clientWidth-52;
+    var n=Math.max(3,Math.min(6,Math.floor(w/130)));
+    var items=books.map(function(b){
+      return '<div class="book '+b.m+'" style="background:'+b.c+';color:'+b.f+'"><div class="tg">'+b.g+'</div><div class="bt">'+b.t+'</div><div class="au">'+b.a+'</div></div>';
+    });
+    items.push('<div class="add-book"><i class="ti ti-plus"></i>次の1本を<br>棚に迎える</div>');
+    var html='';
+    for(var i=0;i<items.length;i+=n){
+      html+='<div class="row" style="grid-template-columns:repeat('+n+',1fr)">'+items.slice(i,i+n).join('')+'</div><div class="plank"></div>';
+    }
+    box.innerHTML=html;
+  }
+  render();window.addEventListener('resize',render);
+</script>
+</body>
+</html>
