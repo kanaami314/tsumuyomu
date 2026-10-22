@@ -97,7 +97,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signInWithGoogle: async () => {
         const result = await supabase?.auth.signInWithOAuth({
           provider: 'google',
-          options: { redirectTo: window.location.origin },
+          options: {
+            redirectTo: window.location.origin,
+            // 前に選んだアカウントで、自動的に入らない(複数のアカウントを使い分けられるように)
+            queryParams: { prompt: 'select_account' },
+          },
         })
         return result?.error ? 'ログインを始められませんでした。通信を確かめて、もう一度お試しください。' : null
       },
