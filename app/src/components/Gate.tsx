@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useAuth } from '../lib/auth'
+import Icon from './Icon'
 
 function GateFrame({ children }: { children: React.ReactNode }) {
   return (
@@ -22,16 +23,22 @@ export function Loading() {
 }
 
 export function LoginScreen() {
-  const { signInWithGoogle } = useAuth()
+  const { signInWithGoogle, notice } = useAuth()
+  const [error, setError] = useState<string | null>(null)
   return (
     <GateFrame>
       <div className="logo gate-logo">
-        <i className="ti ti-leaf" aria-hidden="true" /> つむよむ
+        <Icon name="leaf" /> つむよむ
       </div>
       <p className="gate-lead">論文を読んだ日々を、積み上げていく。</p>
-      <button type="button" className="gate-button" onClick={signInWithGoogle}>
-        <i className="ti ti-brand-google" aria-hidden="true" /> Google でログイン
+      <button type="button" className="gate-button" onClick={async () => setError(await signInWithGoogle())}>
+        <Icon name="google" /> Google でログイン
       </button>
+      {(error ?? notice) && (
+        <p className="gate-error" role="alert">
+          {error ?? notice}
+        </p>
+      )}
       <p className="gate-note">いまは、招待された人だけが使えます。</p>
     </GateFrame>
   )
@@ -90,6 +97,22 @@ export function InviteScreen() {
           {busy ? '確認しています…' : '登録する'}
         </button>
       </form>
+      <button type="button" className="gate-link" onClick={signOut}>
+        ログアウト
+      </button>
+    </GateFrame>
+  )
+}
+
+export function LoadErrorScreen() {
+  const { retry, signOut } = useAuth()
+  return (
+    <GateFrame>
+      <h1 className="gate-title">読み込めませんでした</h1>
+      <p className="gate-lead">通信を確かめて、もう一度お試しください。</p>
+      <button type="button" className="gate-button" onClick={retry}>
+        もう一度読み込む
+      </button>
       <button type="button" className="gate-link" onClick={signOut}>
         ログアウト
       </button>

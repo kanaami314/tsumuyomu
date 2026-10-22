@@ -3,6 +3,7 @@ import { toBook } from '../lib/books'
 import { useRecords } from '../lib/RecordsContext'
 import { countEntries } from '../lib/stats'
 import NewShelfChip from './NewShelfChip'
+import Icon from './Icon'
 import ShelfCase from './ShelfCase'
 
 interface Props {
@@ -65,7 +66,7 @@ export default function ShelfScreen({ onOpen }: Props) {
         {shelves.map((s) => (
           <button key={s.id} type="button" className={`chip${activeFilter === s.id ? ' on' : ''}`} onClick={() => setFilter(s.id)}>
             {s.name}
-            {s.visibility === 'public' && <i className="ti ti-world" aria-label="公開中" />}
+            {s.visibility === 'public' && <Icon name="world" label="公開中" />}
           </button>
         ))}
         <NewShelfChip onCreate={async (name) => (await addShelf(name)) !== null} />

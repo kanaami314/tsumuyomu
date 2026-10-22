@@ -92,6 +92,17 @@ begin
   perform t.as_admin();
   perform t.eq('回数が増える(2)',
     (select used_count from public.invite_codes where code = 'GOODCODE2'), 1);
+  perform t.eq('どのコードで登録したかが残る(a)',
+    (select code from public.invite_uses where user_id = a), 'GOODCODE1');
+  perform t.eq('どのコードで登録したかが残る(b)',
+    (select code from public.invite_uses where user_id = b), 'GOODCODE2');
+  perform t.eq('失敗した登録は、記録に残らない',
+    (select count(*) from public.invite_uses)::int, 2);
+
+  perform t.as_user(a);
+  perform t.throws('本人でも利用の記録は読めない', $q$select * from public.invite_uses$q$, 'permission denied');
+  perform t.as_anon();
+  perform t.throws('未ログインも利用の記録は読めない', $q$select * from public.invite_uses$q$, 'permission denied');
 end;
 $$;
 

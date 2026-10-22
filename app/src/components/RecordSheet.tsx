@@ -4,6 +4,7 @@ import { useRecords } from '../lib/RecordsContext'
 import type { Depth, EntryRow } from '../lib/records'
 import { todayString } from '../lib/stats'
 import NewShelfChip from './NewShelfChip'
+import Icon from './Icon'
 import PaperPicker, { PaperCard } from './PaperPicker'
 
 interface Props {
@@ -94,7 +95,7 @@ export default function RecordSheet({ entryId, onClose }: Props) {
             </div>
             <div className="ss">{entry ? '内容を直したり、消したりできます。' : '今日読んだ論文を、棚へ。'}</div>
             <button type="button" className="x" aria-label="閉じる" onClick={onClose}>
-              <i className="ti ti-x" aria-hidden="true" />
+              <Icon name="x" />
             </button>
           </div>
 
@@ -149,7 +150,7 @@ export default function RecordSheet({ entryId, onClose }: Props) {
                 aria-pressed={n <= rating}
                 onClick={() => setRating(n === rating ? 0 : n)}
               >
-                <i className={`ti ${n <= rating ? 'ti-bookmark-filled f' : 'ti-bookmark'}`} aria-hidden="true" />
+                <Icon name={n <= rating ? 'bookmark-filled' : 'bookmark'} className={n <= rating ? 'f' : undefined} />
               </button>
             ))}
           </div>

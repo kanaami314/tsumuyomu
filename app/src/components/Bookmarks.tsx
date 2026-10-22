@@ -1,3 +1,5 @@
+import Icon from './Icon'
+
 interface Props {
   value: number
   max?: number
@@ -9,7 +11,7 @@ export default function Bookmarks({ value, max = 5, className }: Props) {
   return (
     <div className={className} role="img" aria-label={`刺さった度 ${value} / ${max}`}>
       {Array.from({ length: max }, (_, i) => (
-        <i key={i} className={`ti ${i < value ? 'ti-bookmark-filled f' : 'ti-bookmark'}`} aria-hidden="true" />
+        <Icon key={i} name={i < value ? 'bookmark-filled' : 'bookmark'} className={i < value ? 'f' : undefined} />
       ))}
     </div>
   )

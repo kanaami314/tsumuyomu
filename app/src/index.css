@@ -153,7 +153,7 @@ dd {
   width: 62px;
 }
 
-.tab i {
+.tab .ico {
   font-size: 23px;
 }
 
@@ -165,16 +165,14 @@ dd {
   margin-top: -24px;
 }
 
-.tab.add i {
+.tab.add .ico {
+  box-sizing: border-box;
   width: 56px;
   height: 56px;
+  padding: 14px;
   border-radius: 50%;
   background: var(--green);
   color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
   box-shadow: 0 6px 14px rgba(47, 107, 74, 0.4);
 }
 
@@ -1425,7 +1423,7 @@ button.face {
 }
 
 /* 公開(M5) */
-.chip i {
+.chip .ico {
   margin-left: 4px;
   font-size: 12px;
 }
@@ -1616,4 +1614,46 @@ button.face {
 .logout {
   display: block;
   margin: 18px auto 0;
+}
+
+/* アイコン(SVG) */
+.ico {
+  flex: none;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+}
+
+.fld .fld-icon {
+  color: #8fa593;
+}
+
+.ok .ico {
+  vertical-align: -0.15em;
+}
+
+/* 通信のお知らせ(M6) */
+.banner {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: calc(8px + env(safe-area-inset-top)) 14px 8px;
+  background: #fff3d6;
+  border-bottom: 1px solid #e6d3a3;
+  font-size: 12.5px;
+  color: #6b4a1e;
+  text-align: center;
+}
+
+.banner button {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--green);
+  color: #fff;
+  font-size: 12px;
 }

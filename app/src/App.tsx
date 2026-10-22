@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { InviteScreen, Loading, LoginScreen } from './components/Gate'
+import { InviteScreen, LoadErrorScreen, Loading, LoginScreen } from './components/Gate'
 import HomeScreen from './components/HomeScreen'
 import MyPage from './components/MyPage'
 import Placeholder from './components/Placeholder'
@@ -10,8 +10,33 @@ import ShelfScreen from './components/ShelfScreen'
 import TabBar, { type TabId } from './components/TabBar'
 import { AuthProvider, useAuth } from './lib/auth'
 import { parsePublicPath } from './lib/publicView'
-import { RecordsProvider } from './lib/RecordsContext'
+import { RecordsProvider, useRecords } from './lib/RecordsContext'
 import { supabase } from './lib/supabase'
+import { useOnline } from './lib/useOnline'
+
+/** 通信の状態に応じた、上のお知らせ */
+function Banner() {
+  const online = useOnline()
+  const { status, reload } = useRecords()
+  if (!online) {
+    return (
+      <div className="banner" role="status">
+        オフラインです。通信が戻ると、使えるようになります。
+      </div>
+    )
+  }
+  if (status === 'error') {
+    return (
+      <div className="banner" role="alert">
+        記録を読み込めませんでした。
+        <button type="button" onClick={() => void reload()}>
+          もう一度読み込む
+        </button>
+      </div>
+    )
+  }
+  return null
+}
 
 /** 記録の入力シート。entryId があれば、その記録を直す */
 type Sheet = { entryId?: string } | null
@@ -25,6 +50,7 @@ function Main({ signedIn }: { signedIn: boolean }) {
 
   return (
     <div className="app">
+      <Banner />
       {tab === 'home' && <HomeScreen onRecord={record} onOpen={open} />}
       {tab === 'shelf' && <ShelfScreen onOpen={open} />}
       {tab === 'review' && <ReviewScreen onOpen={open} />}
@@ -48,6 +74,8 @@ function Gated() {
       return <Loading />
     case 'signed-out':
       return <LoginScreen />
+    case 'error':
+      return <LoadErrorScreen />
     case 'needs-invite':
       return <InviteScreen />
     case 'ready':

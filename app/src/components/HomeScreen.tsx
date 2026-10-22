@@ -1,4 +1,5 @@
 import Bookmarks from './Bookmarks'
+import Icon from './Icon'
 import { FIELD_COLORS, toBook } from '../lib/books'
 import { useRecords } from '../lib/RecordsContext'
 import { buildSpine } from '../lib/spine'
@@ -21,10 +22,10 @@ export default function HomeScreen({ onRecord, onOpen }: Props) {
       <div className="veil" />
       <header className="top">
         <span className="logo">
-          <i className="ti ti-leaf" aria-hidden="true" /> つむよむ
+          <Icon name="leaf" /> つむよむ
         </span>
         <span className="av glass">
-          <i className="ti ti-user" aria-hidden="true" />
+          <Icon name="user" />
         </span>
       </header>
       {latest && book ? (

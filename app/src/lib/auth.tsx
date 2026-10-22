@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { Session } from '@supabase/supabase-js'
+import { takeAuthError } from './authError'
 import { supabase } from './supabase'
 
 export interface Profile {
@@ -12,12 +13,18 @@ export interface Profile {
 type AuthState =
   | { status: 'loading' }
   | { status: 'signed-out' }
+  /** ログインはしているが、プロフィールを確かめられなかった(通信の失敗など) */
+  | { status: 'error' }
   | { status: 'needs-invite'; session: Session }
   | { status: 'ready'; session: Session; profile: Profile }
 
 interface AuthContextValue {
   state: AuthState
-  signInWithGoogle: () => Promise<void>
+  /** ログイン前の画面に出す知らせ(ログインの途中で失敗したときなど) */
+  notice: string | null
+  /** 失敗したら、画面に出す文言を返す(成功すると、Google の画面に移る) */
+  signInWithGoogle: () => Promise<string | null>
+  retry: () => Promise<void>
   signOut: () => Promise<void>
   /** 招待コードとユーザー名でプロフィールを作る。失敗したら、画面に出す文言を返す */
   claimInvite: (code: string, username: string) => Promise<string | null>
@@ -53,6 +60,7 @@ async function fetchProfile(userId: string): Promise<Profile | null> {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>({ status: 'loading' })
+  const [notice] = useState(takeAuthError)
 
   const resolve = useCallback(async (session: Session | null) => {
     if (!session) {
@@ -63,15 +71,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const profile = await fetchProfile(session.user.id)
       setState(profile ? { status: 'ready', session, profile } : { status: 'needs-invite', session })
     } catch {
-      // プロフィールを確かめられないときは、登録済みの人を誤って招待の画面に送らないよう、ログアウト扱いにする
-      setState({ status: 'signed-out' })
+      // 登録済みの人を、誤って招待の画面に送らないよう、確かめられなかったことを、そのまま伝える
+      setState({ status: 'error' })
     }
   }, [])
 
   useEffect(() => {
     if (!supabase) return
     const client = supabase
-    client.auth.getSession().then(({ data }) => resolve(data.session))
+    client.auth
+      .getSession()
+      .then(({ data }) => resolve(data.session))
+      .catch(() => setState({ status: 'error' }))
     // コールバックの中で、すぐに別の問い合わせをしないよう、setTimeout で逃がす(supabase-js の注意点)
     const { data } = client.auth.onAuthStateChange((_event, session) => {
       setTimeout(() => resolve(session), 0)
@@ -82,11 +93,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value = useMemo<AuthContextValue>(
     () => ({
       state,
+      notice,
       signInWithGoogle: async () => {
-        await supabase?.auth.signInWithOAuth({
+        const result = await supabase?.auth.signInWithOAuth({
           provider: 'google',
           options: { redirectTo: window.location.origin },
         })
+        return result?.error ? 'ログインを始められませんでした。通信を確かめて、もう一度お試しください。' : null
+      },
+      retry: async () => {
+        if (!supabase) return
+        setState({ status: 'loading' })
+        try {
+          const { data } = await supabase.auth.getSession()
+          await resolve(data.session)
+        } catch {
+          setState({ status: 'error' })
+        }
       },
       signOut: async () => {
         await supabase?.auth.signOut()
@@ -111,7 +134,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return null
       },
     }),
-    [state, resolve],
+    [state, notice, resolve],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

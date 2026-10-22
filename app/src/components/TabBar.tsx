@@ -1,3 +1,5 @@
+import Icon, { type IconName } from './Icon'
+
 export type TabId = 'home' | 'shelf' | 'review' | 'mypage'
 
 interface Props {
@@ -8,17 +10,17 @@ interface Props {
 
 interface TabDef {
   id: TabId
-  icon: string
+  icon: IconName
   label: string
 }
 
 const LEFT: TabDef[] = [
-  { id: 'home', icon: 'ti-home', label: 'ホーム' },
-  { id: 'shelf', icon: 'ti-books', label: '書棚' },
+  { id: 'home', icon: 'home', label: 'ホーム' },
+  { id: 'shelf', icon: 'books', label: '書棚' },
 ]
 const RIGHT: TabDef[] = [
-  { id: 'review', icon: 'ti-history', label: 'ふりかえり' },
-  { id: 'mypage', icon: 'ti-user', label: 'マイページ' },
+  { id: 'review', icon: 'history', label: 'ふりかえり' },
+  { id: 'mypage', icon: 'user', label: 'マイページ' },
 ]
 
 export default function TabBar({ current, onSelect, onRecord }: Props) {
@@ -30,7 +32,7 @@ export default function TabBar({ current, onSelect, onRecord }: Props) {
       aria-current={current === t.id ? 'page' : undefined}
       onClick={() => onSelect(t.id)}
     >
-      <i className={`ti ${t.icon}`} aria-hidden="true" />
+      <Icon name={t.icon} />
       {t.label}
     </button>
   )
@@ -38,7 +40,7 @@ export default function TabBar({ current, onSelect, onRecord }: Props) {
     <nav className="tabbar" aria-label="メイン">
       {LEFT.map(tab)}
       <button type="button" className="tab add" aria-label="記録する" onClick={onRecord}>
-        <i className="ti ti-plus" aria-hidden="true" />
+        <Icon name="plus" />
         <span>記録</span>
       </button>
       {RIGHT.map(tab)}

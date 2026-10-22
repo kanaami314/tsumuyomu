@@ -7,6 +7,7 @@ import { formatDay } from '../lib/stats'
 import { supabase } from '../lib/supabase'
 import Bookmarks from './Bookmarks'
 import ShelfCase from './ShelfCase'
+import Icon from './Icon'
 
 interface Props {
   username: string
@@ -50,7 +51,7 @@ function PublicEntrySheet({ entry, onClose }: { entry: EntryRow; onClose: () => 
               {[authorLabel(p.authors), p.venue, p.year].filter(Boolean).join('　')}
             </div>
             <button type="button" className="x" aria-label="閉じる" onClick={onClose}>
-              <i className="ti ti-x" aria-hidden="true" />
+              <Icon name="x" />
             </button>
           </div>
           <p className="public-meta">
@@ -156,7 +157,7 @@ export default function PublicPage({ username }: Props) {
 
         <p className="public-foot">
           <a href="/">
-            <i className="ti ti-leaf" aria-hidden="true" /> つむよむ
+            <Icon name="leaf" /> つむよむ
           </a>
           　論文を読んだ日々を、積み上げていく。
         </p>

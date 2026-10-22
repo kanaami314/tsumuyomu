@@ -1,3 +1,4 @@
+import Icon from './Icon'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { classifyField, LookupError, lookupPaper, normalizeIdentifier, authorLabel, type PaperDraft } from '../lib/biblio'
 import { FIELD_COLORS } from '../lib/books'
@@ -136,7 +137,7 @@ export default function PaperPicker({ onChange }: Props) {
   return (
     <>
       <label className="fld">
-        <i className="ti ti-link" style={{ color: '#8FA593' }} aria-hidden="true" />
+        <Icon name="link" className="fld-icon" />
         <input
           value={query}
           onChange={(e) => changeQuery(e.target.value)}
@@ -157,7 +158,7 @@ export default function PaperPicker({ onChange }: Props) {
         <>
           <PaperCard draft={found} />
           <p className="ok">
-            <i className="ti ti-circle-check" aria-hidden="true" /> 書誌情報を取得しました
+            <Icon name="circle-check" /> 書誌情報を取得しました
           </p>
         </>
       )}
