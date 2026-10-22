@@ -18,6 +18,8 @@ interface RecordsContextValue {
   editEntry: (entryId: string, input: EntryInput) => Promise<string | null>
   removeEntry: (entryId: string) => Promise<string | null>
   addShelf: (name: string) => Promise<ShelfRow | null>
+  setShelfPublic: (shelfId: string, isPublic: boolean) => Promise<string | null>
+  removeShelf: (shelfId: string) => Promise<string | null>
   reload: () => Promise<void>
 }
 
@@ -81,6 +83,9 @@ export function RecordsProvider({ children }: { children: ReactNode }) {
           return null
         }
       },
+      setShelfPublic: (shelfId, isPublic) =>
+        run((db) => api.setShelfVisibility(db, shelfId, isPublic ? 'public' : 'private'), '切り替えられませんでした。通信を確かめて、もう一度お試しください。'),
+      removeShelf: (shelfId) => run((db) => api.deleteShelf(db, shelfId), '削除できませんでした。通信を確かめて、もう一度お試しください。'),
       reload,
     }
   }, [status, demo, snapshot, userId, reload])

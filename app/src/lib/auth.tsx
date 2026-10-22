@@ -21,6 +21,8 @@ interface AuthContextValue {
   signOut: () => Promise<void>
   /** 招待コードとユーザー名でプロフィールを作る。失敗したら、画面に出す文言を返す */
   claimInvite: (code: string, username: string) => Promise<string | null>
+  /** 表示名と自己紹介を直す。失敗したら、画面に出す文言を返す */
+  updateProfile: (displayName: string, bio: string) => Promise<string | null>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -94,6 +96,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { error } = await supabase.rpc('claim_invite', { p_code: code, p_username: username })
         if (error) return toInviteMessage(error)
         await resolve(state.session)
+        return null
+      },
+      updateProfile: async (displayName, bio) => {
+        if (!supabase || state.status !== 'ready') return 'ログインし直してください。'
+        const { data, error } = await supabase
+          .from('profiles')
+          .update({ display_name: displayName.trim() || null, bio: bio.trim() || null })
+          .eq('id', state.profile.id)
+          .select('id, username, display_name, bio')
+          .single<Profile>()
+        if (error) return '保存できませんでした。通信を確かめて、もう一度お試しください。'
+        setState({ status: 'ready', session: state.session, profile: data })
         return null
       },
     }),

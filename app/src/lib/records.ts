@@ -182,3 +182,15 @@ export async function createShelf(db: SupabaseClient, userId: string, name: stri
   if (res.error) throw res.error
   return res.data
 }
+
+export async function setShelfVisibility(db: SupabaseClient, shelfId: string, visibility: ShelfRow['visibility']): Promise<void> {
+  const res = await db.from('shelves').update({ visibility }).eq('id', shelfId).select('id')
+  if (res.error) throw res.error
+  if (res.data.length === 0) throw new Error('棚が見つかりません')
+}
+
+export async function deleteShelf(db: SupabaseClient, shelfId: string): Promise<void> {
+  const res = await db.from('shelves').delete().eq('id', shelfId).select('id')
+  if (res.error) throw res.error
+  if (res.data.length === 0) throw new Error('棚が見つかりません')
+}

@@ -178,3 +178,24 @@ export function authorLabel(authors: string[]): string {
   const first = authors[0].split(',')[0].trim()
   return authors.length > 1 ? `${first} ほか` : first
 }
+
+/**
+ * リンクに使ってよい URL だけを返す。http(s) 以外(javascript: など)は null。
+ * 論文の URL は、利用者が自由に書き込める列なので、公開ページに出すときは、必ずここを通す。
+ * doi.org は https に揃える。
+ */
+export function webUrl(url: string | null | undefined): string | null {
+  if (!url) return null
+  let parsed: URL
+  try {
+    parsed = new URL(url)
+  } catch {
+    return null
+  }
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return null
+  if (parsed.hostname === 'doi.org' || parsed.hostname === 'dx.doi.org') {
+    parsed.protocol = 'https:'
+    parsed.hostname = 'doi.org'
+  }
+  return parsed.toString()
+}

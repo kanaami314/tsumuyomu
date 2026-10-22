@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { authorLabel, classifyField, fromCsl, lookupPaper, normalizeIdentifier, shortTitle } from './biblio'
+import { authorLabel, classifyField, fromCsl, lookupPaper, normalizeIdentifier, shortTitle, webUrl } from './biblio'
 
 describe('normalizeIdentifier', () => {
   it('DOI をそのまま受け取り、小文字にする', () => {
@@ -135,5 +135,27 @@ describe('shortTitle / authorLabel', () => {
     expect(authorLabel(['LeCun, Yann', 'Bengio, Yoshua'])).toBe('LeCun ほか')
     expect(authorLabel(['Miller, George'])).toBe('Miller')
     expect(authorLabel([])).toBe('')
+  })
+})
+
+describe('webUrl', () => {
+  it('http(s) のリンクだけを通す', () => {
+    expect(webUrl('https://arxiv.org/abs/1706.03762')).toBe('https://arxiv.org/abs/1706.03762')
+    expect(webUrl('http://example.com/paper')).toBe('http://example.com/paper')
+  })
+
+  it('doi.org は https に揃える', () => {
+    expect(webUrl('http://dx.doi.org/10.1038/nature14539')).toBe('https://doi.org/10.1038/nature14539')
+    expect(webUrl('http://doi.org/10.1038/nature14539')).toBe('https://doi.org/10.1038/nature14539')
+  })
+
+  it('危険な形式や、URL でないものは通さない', () => {
+    expect(webUrl('javascript:alert(1)')).toBeNull()
+    expect(webUrl('JaVaScRiPt:alert(1)')).toBeNull()
+    expect(webUrl('data:text/html,<script>alert(1)</script>')).toBeNull()
+    expect(webUrl('vbscript:msgbox')).toBeNull()
+    expect(webUrl('not a url')).toBeNull()
+    expect(webUrl(null)).toBeNull()
+    expect(webUrl('')).toBeNull()
   })
 })

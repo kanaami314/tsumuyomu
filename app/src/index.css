@@ -1423,3 +1423,197 @@ button.face {
   font-size: 14px;
   color: #3f7d58;
 }
+
+/* 公開(M5) */
+.chip i {
+  margin-left: 4px;
+  font-size: 12px;
+}
+
+.public .sh-head .handle {
+  margin-top: 0;
+  font-size: 12px;
+  color: #53675a;
+}
+
+.public .sh-head .bio {
+  margin-top: 6px;
+  max-width: 28em;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #3d5144;
+  white-space: pre-line;
+}
+
+.public .chips {
+  padding-top: 12px;
+}
+
+.public .screen,
+.screen.public {
+  padding-bottom: 32px;
+}
+
+.public-note {
+  position: relative;
+  z-index: 5;
+  margin: 24px 24px 0;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #46604f;
+}
+
+.public-foot {
+  margin: 22px 0 0;
+  padding: 0 18px;
+  text-align: center;
+  font-size: 11.5px;
+  color: #5e7064;
+}
+
+.public-foot a {
+  color: var(--green);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.public-meta {
+  margin: 0 0 6px;
+  font-size: 12.5px;
+  color: #46604f;
+}
+
+.hs.left {
+  justify-content: flex-start;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.public-comment {
+  margin: 0 0 14px;
+  font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  font-size: 15px;
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+.public-link {
+  font-size: 13px;
+  color: var(--green);
+}
+
+/* マイページ(M5) */
+.mypage {
+  padding-top: calc(24px + env(safe-area-inset-top));
+}
+
+.mypage-head {
+  padding: 24px 18px 0;
+}
+
+.mypage-head h1 {
+  font-size: 20px;
+  color: var(--green);
+}
+
+.mypage-head p {
+  margin-top: 4px;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: #53675a;
+}
+
+.mypage .card {
+  margin: 14px 18px 0;
+  padding: 14px 14px 12px;
+  border-radius: 20px;
+}
+
+.mypage .card h2 {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+
+.mypage .url {
+  margin: 10px 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  word-break: break-all;
+  user-select: all;
+}
+
+.mypage .actions {
+  display: flex;
+  gap: 8px;
+}
+
+.gate-button.small {
+  width: auto;
+  flex: 1;
+  padding: 10px 14px;
+  font-size: 13px;
+  text-decoration: none;
+  box-shadow: none;
+}
+
+.gate-button.ghost {
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--green);
+  border: 1px solid #d9e6d6;
+}
+
+.mypage .gate-form {
+  gap: 10px;
+}
+
+.shelf-rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shelf-row {
+  padding: 8px 0;
+  border-top: 1px solid rgba(90, 110, 95, 0.15);
+}
+
+.shelf-row:first-child {
+  border-top: 0;
+}
+
+.shelf-row-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.shelf-row .name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.shelf-row-sub {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.shelf-row-sub small {
+  font-size: 11px;
+  color: #6f8175;
+}
+
+.shelf-row .gate-link {
+  margin-top: 0;
+}
+
+.logout {
+  display: block;
+  margin: 18px auto 0;
+}

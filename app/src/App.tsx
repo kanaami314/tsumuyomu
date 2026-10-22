@@ -3,11 +3,13 @@ import { InviteScreen, Loading, LoginScreen } from './components/Gate'
 import HomeScreen from './components/HomeScreen'
 import MyPage from './components/MyPage'
 import Placeholder from './components/Placeholder'
+import PublicPage from './components/PublicPage'
 import RecordSheet from './components/RecordSheet'
 import ReviewScreen from './components/ReviewScreen'
 import ShelfScreen from './components/ShelfScreen'
 import TabBar, { type TabId } from './components/TabBar'
 import { AuthProvider, useAuth } from './lib/auth'
+import { parsePublicPath } from './lib/publicView'
 import { RecordsProvider } from './lib/RecordsContext'
 import { supabase } from './lib/supabase'
 
@@ -58,6 +60,10 @@ function Gated() {
 }
 
 export default function App() {
+  // 公開ページ(/u/ユーザー名)は、ログインなしで見られる
+  const publicUsername = parsePublicPath(window.location.pathname)
+  if (publicUsername) return <PublicPage username={publicUsername} />
+
   // Supabase の接続情報がない間(まだ設定していない公開先など)は、見た目の確認用の画面を出す
   if (!supabase)
     return (
