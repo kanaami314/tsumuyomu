@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import {
   IconBookmark,
   IconBookmarkFilled,
@@ -36,15 +37,17 @@ export type IconName = keyof typeof ICONS
 interface Props {
   name: IconName
   className?: string
+  style?: CSSProperties
   /** 意味をもつアイコンには、読み上げ用の名前を付ける。飾りなら、付けない */
   label?: string
 }
 
-export default function Icon({ name, className, label }: Props) {
+export default function Icon({ name, className, style, label }: Props) {
   const Component = ICONS[name]
   return (
     <Component
       className={className ? `ico ${className}` : 'ico'}
+      style={style}
       size="1em"
       aria-hidden={label ? undefined : true}
       aria-label={label}

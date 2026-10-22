@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { InviteScreen, LoadErrorScreen, Loading, LoginScreen } from './components/Gate'
 import HomeScreen from './components/HomeScreen'
 import MyPage from './components/MyPage'
@@ -8,6 +8,7 @@ import RecordSheet from './components/RecordSheet'
 import ReviewScreen from './components/ReviewScreen'
 import ShelfScreen from './components/ShelfScreen'
 import TabBar, { type TabId } from './components/TabBar'
+import Toast from './components/Toast'
 import { AuthProvider, useAuth } from './lib/auth'
 import { parsePublicPath } from './lib/publicView'
 import { RecordsProvider, useRecords } from './lib/RecordsContext'
@@ -44,6 +45,8 @@ type Sheet = { entryId?: string } | null
 function Main({ signedIn }: { signedIn: boolean }) {
   const [tab, setTab] = useState<TabId>('home')
   const [sheet, setSheet] = useState<Sheet>(null)
+  const [toast, setToast] = useState<string | null>(null)
+  const clearToast = useCallback(() => setToast(null), [])
 
   const record = () => setSheet({})
   const open = (entryId: string) => setSheet({ entryId })
@@ -62,7 +65,10 @@ function Main({ signedIn }: { signedIn: boolean }) {
         ))}
       <TabBar current={tab} onSelect={setTab} onRecord={record} />
       {/* 開くたびに作り直して、前の入力を引きずらない */}
-      {sheet && <RecordSheet key={sheet.entryId ?? 'new'} entryId={sheet.entryId} onClose={() => setSheet(null)} />}
+      {sheet && (
+        <RecordSheet key={sheet.entryId ?? 'new'} entryId={sheet.entryId} onClose={() => setSheet(null)} onDone={setToast} />
+      )}
+      {toast && <Toast key={toast} message={toast} onDone={clearToast} />}
     </div>
   )
 }

@@ -11,6 +11,8 @@ interface Props {
   /** 渡すと、その記録を編集する。なければ新しく記録する */
   entryId?: string
   onClose: () => void
+  /** 保存や削除がうまくいったときに、お知らせの文言を渡す */
+  onDone?: (message: string) => void
 }
 
 const DEPTHS: { value: Depth; label: string }[] = [
@@ -32,7 +34,7 @@ function draftOf(entry: EntryRow): PaperDraft {
   }
 }
 
-export default function RecordSheet({ entryId, onClose }: Props) {
+export default function RecordSheet({ entryId, onClose, onDone }: Props) {
   const records = useRecords()
   const entry = entryId ? records.entries.find((e) => e.id === entryId) : undefined
 
@@ -64,8 +66,12 @@ export default function RecordSheet({ entryId, onClose }: Props) {
     const input = { readOn, depth, comment, rating, isPublic, shelfIds }
     const failure = entry ? await records.editEntry(entry.id, input) : draft ? await records.addEntry(draft, input) : '論文を選んでください。'
     setBusy(false)
-    if (failure) setError(failure)
-    else onClose()
+    if (failure) {
+      setError(failure)
+      return
+    }
+    onDone?.(entry ? '保存しました' : '棚に迎えました')
+    onClose()
   }
 
   const remove = async () => {
@@ -73,8 +79,12 @@ export default function RecordSheet({ entryId, onClose }: Props) {
     setBusy(true)
     const failure = await records.removeEntry(entry.id)
     setBusy(false)
-    if (failure) setError(failure)
-    else onClose()
+    if (failure) {
+      setError(failure)
+      return
+    }
+    onDone?.('記録を消しました')
+    onClose()
   }
 
   const createShelf = async (name: string) => {

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import type { Book } from '../lib/books'
 import { buildSpine, layoutRows } from '../lib/spine'
 
@@ -39,6 +39,9 @@ export default function ShelfCase({ items, emptyText, onOpen }: Props) {
     [items, available],
   )
   const empty = rows.length === 0
+  // 本が上から順に落ちて並ぶよう、並び順(--i)を渡す
+  let order = 0
+  const orderStyle = () => ({ '--i': order++ }) as CSSProperties
 
   return (
     <div className="case">
@@ -54,7 +57,7 @@ export default function ShelfCase({ items, emptyText, onOpen }: Props) {
                       key={s.book.id}
                       type="button"
                       className="face"
-                      style={{ background: s.background, color: s.color }}
+                      style={{ ...orderStyle(), background: s.background, color: s.color }}
                       onClick={() => onOpen(s.book.id)}
                       aria-label={s.book.title}
                     >
@@ -70,7 +73,7 @@ export default function ShelfCase({ items, emptyText, onOpen }: Props) {
                       key={s.book.id}
                       type="button"
                       className="sp"
-                      style={{ width: s.width, height: s.height, background: s.background, color: s.color }}
+                      style={{ ...orderStyle(), width: s.width, height: s.height, background: s.background, color: s.color }}
                       title={s.book.title}
                       aria-label={s.book.title}
                       onClick={() => onOpen(s.book.id)}

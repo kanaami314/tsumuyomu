@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { toBook } from '../lib/books'
 import { useRecords } from '../lib/RecordsContext'
 import { countEntries } from '../lib/stats'
+import { useCountUp } from '../lib/useCountUp'
 import NewShelfChip from './NewShelfChip'
 import Icon from './Icon'
 import ShelfCase from './ShelfCase'
@@ -19,6 +20,9 @@ export default function ShelfScreen({ onOpen }: Props) {
   // 消された棚を選んだままにしない
   const activeFilter = filter === ALL || shelves.some((s) => s.id === filter) ? filter : ALL
   const counts = countEntries(entries)
+  const total = useCountUp(counts.total)
+  const month = useCountUp(counts.month)
+  const days = useCountUp(counts.days)
 
   const items = useMemo(
     () =>
@@ -46,15 +50,15 @@ export default function ShelfScreen({ onOpen }: Props) {
         <p>毎日1本、ゆっくり読んでいます。</p>
         <dl className="cnt">
           <div>
-            <dd>{counts.total}</dd>
+            <dd>{total}</dd>
             <dt>通算</dt>
           </div>
           <div>
-            <dd>{counts.month}</dd>
+            <dd>{month}</dd>
             <dt>今月</dt>
           </div>
           <div>
-            <dd>{counts.days}</dd>
+            <dd>{days}</dd>
             <dt>読んだ日</dt>
           </div>
         </dl>

@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
+import { useCountUp } from '../lib/useCountUp'
 import { FIELD_COLORS, FIELD_LABELS } from '../lib/books'
 import { useRecords } from '../lib/RecordsContext'
 import {
@@ -24,6 +25,10 @@ export default function ReviewScreen({ onOpen }: Props) {
   const [selected, setSelected] = useState<string | null>(null)
 
   const counts = countEntries(entries)
+  // 数字は、0 から数え上げて見せる(積み上がる感じ)
+  const total = useCountUp(counts.total)
+  const month = useCountUp(counts.month)
+  const days = useCountUp(counts.days)
   const buckets = monthlyBuckets(entries)
   const key = selected ?? buckets[buckets.length - 1].key
   const max = Math.max(1, ...buckets.map((b) => b.count))
@@ -47,21 +52,21 @@ export default function ReviewScreen({ onOpen }: Props) {
         <div className="stat glass">
           <small>通算</small>
           <span>
-            {counts.total}
+            {total}
             <em>本</em>
           </span>
         </div>
         <div className="stat glass">
           <small>今月</small>
           <span>
-            {counts.month}
+            {month}
             <em>本</em>
           </span>
         </div>
         <div className="stat glass">
           <small>読んだ日</small>
           <span>
-            {counts.days}
+            {days}
             <em>日</em>
           </span>
         </div>
@@ -86,7 +91,11 @@ export default function ReviewScreen({ onOpen }: Props) {
                   <span className="n">{b.count > 0 ? b.count : ''}</span>
                   <span className="stack" style={{ height: CHART_HEIGHT }}>
                     {b.fields.map((f, j) => (
-                      <span key={j} className="blk" style={{ background: FIELD_COLORS[f], height: blockHeight }} />
+                      <span
+                        key={j}
+                        className="blk"
+                        style={{ background: FIELD_COLORS[f], height: blockHeight, '--c': i, '--k': j } as CSSProperties}
+                      />
                     ))}
                   </span>
                   <span className="m">{b.month}</span>

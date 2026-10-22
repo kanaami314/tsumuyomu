@@ -1657,3 +1657,241 @@ button.face {
   color: #fff;
   font-size: 12px;
 }
+
+/* ------------------------------------------------------------------
+   動き(静かすぎないように、控えめに)
+   「積む」に合わせて、本が棚に落ちて並ぶ・ブロックが積み上がる動きを中心にする。
+   OS で動きを減らす設定にしている人には、動かさない(いちばん下)。
+   ------------------------------------------------------------------ */
+
+@keyframes screen-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* 本が、上から棚に落ちて、少し弾んで止まる */
+@keyframes book-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-22px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(2px);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+/* ブロックが、上から積み上がる */
+@keyframes block-stack {
+  0% {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(1px);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes float {
+  50% {
+    transform: translateY(-4px) rotate(-0.4deg);
+  }
+}
+
+@keyframes drift {
+  to {
+    transform: scale(1.06) translate(-1.5%, -1%);
+  }
+}
+
+@keyframes sway {
+  50% {
+    transform: rotate(-8deg);
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
+}
+
+/* 画面の切り替え */
+.screen {
+  animation: screen-in 0.35s ease-out backwards;
+}
+
+/* 書棚: 本が、順に落ちて並ぶ(--i は、並び順) */
+.case .sp,
+.case .face {
+  animation: book-drop 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  animation-delay: calc(min(var(--i, 0), 24) * 35ms);
+}
+
+/* ホーム: 写真がゆっくり動き、表紙が浮かぶ */
+.photo.full {
+  animation: drift 40s ease-in-out infinite alternate;
+}
+
+.latest .lcover {
+  animation:
+    screen-in 0.6s ease-out backwards,
+    float 7s ease-in-out 0.6s infinite;
+}
+
+.hs .f {
+  animation: pop 0.4s ease-out backwards;
+  animation-delay: calc(0.5s + var(--n, 0) * 90ms);
+}
+
+/* 葉っぱが、静かに揺れる */
+.logo .ico {
+  transform-origin: 30% 90%;
+  animation: sway 5s ease-in-out infinite;
+}
+
+/* 入力シート */
+.dim {
+  animation: fade-in 0.25s ease-out;
+}
+
+.sheet {
+  animation: sheet-up 0.38s cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+
+/* しおりを選んだとき */
+.hearts .f {
+  animation: pop 0.3s ease-out;
+}
+
+/* タブ */
+.tab.on .ico {
+  animation: pop 0.3s ease-out;
+}
+
+/* 押したときの手応え */
+.tab,
+.chip,
+.gate-button,
+.save,
+.seg button,
+.hearts button,
+.case .sp,
+.case .face,
+.lcover,
+.month-list button,
+.chart .col {
+  transition:
+    transform 0.15s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.tab:active,
+.chip:active,
+.gate-button:active,
+.save:active,
+.seg button:active,
+.hearts button:active,
+.month-list button:active,
+.chart .col:active {
+  transform: scale(0.96);
+}
+
+.case .sp:active,
+.case .face:active {
+  transform: translateY(-4px);
+}
+
+/* ふりかえり: ブロックが積み上がる(--c は月、--k は積む順) */
+.chart .blk {
+  animation: block-stack 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  animation-delay: calc(var(--c, 0) * 40ms + min(var(--k, 0), 12) * 45ms);
+}
+
+.split span {
+  transform-origin: left;
+  animation: grow-x 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s backwards;
+}
+
+.review .card {
+  animation: screen-in 0.45s ease-out backwards;
+}
+
+.review .card:nth-of-type(2) {
+  animation-delay: 0.08s;
+}
+
+.review .card:nth-of-type(3) {
+  animation-delay: 0.16s;
+}
+
+/* お知らせ */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--tabbar-h) + 18px + env(safe-area-inset-bottom));
+  z-index: 60;
+  transform: translateX(-50%);
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(43, 58, 47, 0.92);
+  color: #fff;
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 0 8px 20px rgba(30, 40, 30, 0.25);
+  animation: toast-in 0.3s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
