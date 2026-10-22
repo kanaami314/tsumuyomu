@@ -28,7 +28,8 @@ export function demoSnapshot(): Snapshot {
     id: `demo-${i}`,
     paper_id: `demo-paper-${i}`,
     status: 'done',
-    read_on: `2026-10-${String(20 - Math.floor(i / 2)).padStart(2, '0')}`,
+    // 直近の数か月に散らす
+    read_on: `2026-${String(10 - Math.floor(i / 3)).padStart(2, '0')}-${String(20 - (i % 3) * 4).padStart(2, '0')}`,
     depth: 'deep',
     comment: i === 0 ? 'これが全部の始まりか、と思った。\n図が親切。' : null,
     rating: cover ? 5 : 3,

@@ -4,6 +4,7 @@ import HomeScreen from './components/HomeScreen'
 import MyPage from './components/MyPage'
 import Placeholder from './components/Placeholder'
 import RecordSheet from './components/RecordSheet'
+import ReviewScreen from './components/ReviewScreen'
 import ShelfScreen from './components/ShelfScreen'
 import TabBar, { type TabId } from './components/TabBar'
 import { AuthProvider, useAuth } from './lib/auth'
@@ -24,7 +25,7 @@ function Main({ signedIn }: { signedIn: boolean }) {
     <div className="app">
       {tab === 'home' && <HomeScreen onRecord={record} onOpen={open} />}
       {tab === 'shelf' && <ShelfScreen onOpen={open} />}
-      {tab === 'review' && <Placeholder title="ふりかえり" note="通算や月ごとの推移は、あとで作ります。" />}
+      {tab === 'review' && <ReviewScreen onOpen={open} />}
       {tab === 'mypage' &&
         (signedIn ? (
           <MyPage />
