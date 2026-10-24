@@ -11,7 +11,7 @@
 | 領域 | 採用 |
 |---|---|
 | 画面 | React + Vite + TypeScript(静的な SPA、PWA) |
-| 公開先 | Cloudflare Workers(静的ファイルの配信)。`main` への push で自動公開 |
+| 公開先 | Cloudflare Workers(静的ファイルの配信)。いまは、手元でビルドして `wrangler deploy` で公開(手順は `docs/operations.md`) |
 | DB・認証 | Supabase(Postgres、Google ログイン、行ごとの権限 RLS) |
 | 書誌情報 | doi.org の CSL JSON(Crossref、DataCite) |
 

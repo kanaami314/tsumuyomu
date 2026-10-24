@@ -87,9 +87,28 @@ PGHOST=127.0.0.1 PGPORT=5432 PGUSER=postgres bash supabase/tests/run.sh
 
 ## 6. 公開(デプロイ)
 
-- GitHub の `main` に push すると、Cloudflare が、自動でビルドして公開する(Workers、Root directory は `app`)。
-- 接続情報は、Cloudflare のビルド変数 `VITE_SUPABASE_URL` と `VITE_SUPABASE_ANON_KEY`(公開用キー)。`service_role` / secret キーは、どこにも置かない。
-- ビルドの失敗は、Cloudflare → Workers & Pages → tsumuyomu → Deployments → Build history で見る。
+**いまは、手元でビルドして、`wrangler deploy` で公開する。** `main` への push では、公開されない(下の「自動ビルドについて」)。
+
+1. 変更を `main` にマージする。
+2. `main` の内容で、`app/.env.local` に接続情報を書く(`app/.env.example` を写して、値を入れる)。
+   - `VITE_SUPABASE_URL` と `VITE_SUPABASE_ANON_KEY`(公開用キー)。`service_role` / secret キーは、どこにも置かない。
+   - `.env.local` は、Git に入らない(`.gitignore` 済み)。
+3. ビルドして、公開する。
+
+   ```bash
+   cd app && npm ci && npm run build && npx wrangler@4 deploy
+   ```
+
+   - 初めての PC では、先に `npx wrangler@4 login` で、Cloudflare にログインする。
+   - 公開の設定は `app/wrangler.jsonc`(`dist` を、そのまま配信する)。
+4. https://tsumuyomu.314159265yy3y.workers.dev を開いて、変更が出ているか確かめる。
+   - 公開の履歴は `npx wrangler@4 deployments list` で見られる。前の版に戻すときは `npx wrangler@4 rollback`。
+
+### 自動ビルドについて
+- Cloudflare の Git 連携(Workers Builds、Root directory は `app`)は設定してあるが、2026-10-22 以降、ビルドが失敗し続けている。原因は、まだ確かめていない。
+- PR や `main` に付く「Workers Builds: tsumuyomu」の失敗は、このためで、変更のせいではない。
+- 直すときは、Cloudflare → Workers & Pages → tsumuyomu → Deployments → Build history で、失敗したビルドのログを見る。接続情報は、ビルド変数 `VITE_SUPABASE_URL` と `VITE_SUPABASE_ANON_KEY` に入れる。
+- 直ったら、この節を「`main` に push すると、自動で公開される」に戻す。
 
 ## 7. 気をつけること
 
