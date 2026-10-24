@@ -52,7 +52,7 @@ function Main({ signedIn }: { signedIn: boolean }) {
   const open = (entryId: string) => setSheet({ entryId })
 
   return (
-    <div className="app">
+    <div className="app with-nav">
       <Banner />
       {tab === 'home' && <HomeScreen onRecord={record} onOpen={open} />}
       {tab === 'shelf' && <ShelfScreen onOpen={open} />}

@@ -38,6 +38,10 @@ export default function TabBar({ current, onSelect, onRecord }: Props) {
   )
   return (
     <nav className="tabbar" aria-label="メイン">
+      {/* PC では、左の縦の帯になり、上にロゴを出す(スマホでは隠す) */}
+      <span className="logo side-logo">
+        <Icon name="leaf" /> つむよむ
+      </span>
       {LEFT.map(tab)}
       <button type="button" className="tab add" aria-label="記録する" onClick={onRecord}>
         <Icon name="plus" />
