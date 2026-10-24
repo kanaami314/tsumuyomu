@@ -38,7 +38,7 @@ export default function ShelfScreen({ onOpen }: Props) {
     status === 'loading'
       ? '読み込み中…'
       : activeFilter === ALL
-        ? 'まだ、棚は空です。まん中の「記録」から、1本目を迎えましょう。'
+        ? 'まだ、棚は空です。「記録」から、1本目を迎えましょう。'
         : 'この棚には、まだ何もありません。'
 
   return (

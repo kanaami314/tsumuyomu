@@ -72,7 +72,7 @@ export default function ReviewScreen({ onOpen }: Props) {
         </div>
       </div>
 
-      <div className="card glass">
+      <div className="card glass chart-card">
         <h2>月ごとの積み上げ</h2>
         {status === 'loading' ? (
           <p className="hint">読み込み中…</p>
@@ -111,7 +111,7 @@ export default function ReviewScreen({ onOpen }: Props) {
       </div>
 
       {fields.length > 0 && (
-        <div className="card glass">
+        <div className="card glass fields-card">
           <h2>分野の内訳</h2>
           <div className="split" role="img" aria-label={fields.map((f) => `${FIELD_LABELS[f.field]} ${f.count}本`).join('、')}>
             {fields.map((f) => (
@@ -134,7 +134,7 @@ export default function ReviewScreen({ onOpen }: Props) {
         </div>
       )}
 
-      <div className="card glass">
+      <div className="card glass month-card">
         <h2>
           {selectedBucket ? `${selectedBucket.year}年${selectedBucket.month}月` : ''}に読んだもの
           <small>{shown.length}本</small>

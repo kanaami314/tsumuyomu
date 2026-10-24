@@ -1885,6 +1885,474 @@ button.face {
   animation: toast-in 0.3s ease-out;
 }
 
+/* ------------------------------------------------------------------
+   PC 版(画面の幅が 960px 以上)
+   機能はスマホ版と同じ。並べ方だけを広い画面に合わせる。
+   - 下のタブバーを、左の縦の帯(サイドバー)にする
+   - 中身は、広がりすぎないよう 1120px までにして、写真は横いっぱいに敷く
+   - 記録の入力は、下からのシートではなく、まん中のダイアログにする
+   ------------------------------------------------------------------ */
+
+.side-logo {
+  display: none;
+}
+
+@media (min-width: 960px) {
+  :root {
+    --side-w: 232px;
+  }
+
+  .app {
+    max-width: none;
+  }
+
+  .app.with-nav {
+    padding-left: var(--side-w);
+  }
+
+  .screen {
+    min-height: 100dvh;
+    padding: 0 max(40px, calc((100% - 1120px) / 2)) 48px;
+  }
+
+  .screen.gate {
+    padding: 24px;
+  }
+
+  .screen.placeholder {
+    padding-top: 64px;
+  }
+
+  /* サイドバー */
+  .tabbar {
+    top: 0;
+    right: auto;
+    width: var(--side-w);
+    max-width: none;
+    height: auto;
+    margin: 0;
+    padding: 28px 16px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 4px;
+    border-top: 0;
+    border-right: 1px solid #e6ddc8;
+  }
+
+  .side-logo {
+    display: block;
+    order: -2;
+    margin: 0 10px 22px;
+    font-size: 20px;
+  }
+
+  .tab {
+    flex-direction: row;
+    gap: 12px;
+    width: auto;
+    padding: 11px 14px;
+    border-radius: 12px;
+    font-size: 14.5px;
+  }
+
+  .tab .ico {
+    font-size: 20px;
+  }
+
+  .tab:hover {
+    background: rgba(47, 107, 74, 0.07);
+  }
+
+  .tab.on {
+    background: rgba(47, 107, 74, 0.12);
+    font-weight: 600;
+  }
+
+  /* 記録は、ロゴのすぐ下の、いちばん目立つボタンにする */
+  .tab.add {
+    order: -1;
+    margin: 0 0 18px;
+    padding: 12px 14px;
+    justify-content: center;
+    border-radius: 999px;
+    background: var(--green);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 6px 14px rgba(47, 107, 74, 0.3);
+  }
+
+  .tab.add:hover {
+    background: #285d40;
+  }
+
+  .tab.add .ico {
+    width: 1em;
+    height: 1em;
+    padding: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .tab.add span {
+    margin-top: 0;
+  }
+
+  /* 写真は、横いっぱい */
+  .photo.full {
+    background-size: cover;
+    background-position: 50% 35%;
+  }
+
+  .photo.sh-photo {
+    height: 280px;
+    background-position: 50% 32%;
+  }
+
+  .glow {
+    height: 280px;
+    background: linear-gradient(
+      90deg,
+      rgba(247, 241, 229, 0.92) 0%,
+      rgba(247, 241, 229, 0.65) 40%,
+      rgba(247, 241, 229, 0) 75%
+    );
+  }
+
+  .sh-head {
+    padding-top: 64px;
+  }
+
+  .sh-head h1 {
+    font-size: 26px;
+  }
+
+  .sh-head p {
+    font-size: 14px;
+  }
+
+  .cnt {
+    gap: 28px;
+    margin-top: 14px;
+  }
+
+  .cnt dd {
+    font-size: 30px;
+  }
+
+  .cnt dt {
+    font-size: 12px;
+  }
+
+  .chips {
+    flex-wrap: wrap;
+    padding: 22px 0 0;
+  }
+
+  .chip {
+    font-size: 13.5px;
+    padding: 6px 15px;
+  }
+
+  .chip:not(.on):hover {
+    background: rgba(255, 255, 255, 0.92);
+  }
+
+  .case {
+    margin: 18px 0 0;
+    padding: 16px 16px 0;
+    background-size:
+      100% 16px,
+      16px 100%,
+      16px 100%;
+  }
+
+  .case .sp:hover,
+  .case .face:hover {
+    transform: translateY(-4px);
+  }
+
+  /* ホーム: 表紙を左、ひとことを右に並べる */
+  .home .top {
+    display: none;
+  }
+
+  .latest {
+    display: grid;
+    grid-template-columns: auto minmax(0, 400px);
+    grid-template-rows: 1fr auto auto auto 1fr;
+    grid-template-areas:
+      'cover .'
+      'cover lk'
+      'cover quote'
+      'cover hs'
+      'cover .';
+    align-content: center;
+    justify-content: center;
+    column-gap: 64px;
+    min-height: 100dvh;
+    margin: 0;
+    padding: 48px 0;
+    text-align: left;
+  }
+
+  .latest::before {
+    left: auto;
+    right: -120px;
+    top: 50%;
+    width: 720px;
+    height: 520px;
+    transform: translateY(-50%);
+    background: radial-gradient(
+      ellipse 58% 52% at 50% 50%,
+      rgba(247, 241, 229, 0.95) 0%,
+      rgba(247, 241, 229, 0.85) 45%,
+      rgba(247, 241, 229, 0) 100%
+    );
+  }
+
+  .latest::after {
+    display: none;
+  }
+
+  .lk {
+    grid-area: lk;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0 0 18px;
+    font-size: 13px;
+  }
+
+  .lk span:last-child {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--green);
+  }
+
+  .lcover {
+    grid-area: cover;
+    align-self: center;
+    width: 280px;
+    height: 400px;
+    margin: 0;
+    padding: 36px 26px 26px 40px;
+  }
+
+  .lcover .lt {
+    font-size: 30px;
+  }
+
+  .lcover .la {
+    font-size: 13px;
+  }
+
+  .lcover .rb {
+    right: 30px;
+    width: 17px;
+    height: 54px;
+  }
+
+  .latest .quote {
+    grid-area: quote;
+    font-size: 19px;
+    line-height: 1.85;
+    margin-bottom: 16px;
+  }
+
+  .latest .hs {
+    grid-area: hs;
+    justify-content: flex-start;
+    font-size: 26px;
+  }
+
+  .latest.empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .latest.empty .gate-button {
+    width: auto;
+    padding: 14px 40px;
+  }
+
+  /* ふりかえり: 積み上げは横いっぱい、分野と月の一覧を左右に並べる */
+  .review {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 18px;
+    align-content: start;
+    align-items: start;
+  }
+
+  .review .sh-head,
+  .review .stats,
+  .review .chart-card {
+    grid-column: 1 / -1;
+  }
+
+  /* 分野の内訳がない(まだ記録がない)ときは、一覧を横いっぱいにする */
+  .review .month-card:not(.fields-card + .month-card) {
+    grid-column: 1 / -1;
+  }
+
+  .review .stats {
+    gap: 18px;
+    padding: 22px 0 0;
+  }
+
+  .review .stat {
+    padding: 14px 18px;
+  }
+
+  .review .stat small {
+    font-size: 12.5px;
+  }
+
+  .review .stat span {
+    font-size: 32px;
+  }
+
+  .review .card {
+    margin: 18px 0 0;
+    padding: 18px 20px 16px;
+  }
+
+  .review .card h2 {
+    font-size: 15.5px;
+  }
+
+  .chart {
+    gap: 6px;
+  }
+
+  .chart .col {
+    font-size: 11px;
+  }
+
+  .chart .stack {
+    max-width: 34px;
+  }
+
+  .chart .col:hover {
+    background: rgba(47, 107, 74, 0.07);
+  }
+
+  .month-list button:hover {
+    background: rgba(255, 255, 255, 0.95);
+  }
+
+  /* マイページ: カードを2列に並べる */
+  .mypage {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 18px;
+    align-content: start;
+    align-items: start;
+    padding-top: 40px;
+  }
+
+  .mypage-head,
+  .mypage .logout {
+    grid-column: 1 / -1;
+  }
+
+  .mypage-head {
+    padding: 24px 0 4px;
+  }
+
+  .mypage-head h1 {
+    font-size: 26px;
+  }
+
+  .mypage .card {
+    margin: 18px 0 0;
+    padding: 18px 20px 16px;
+  }
+
+  .mypage .logout {
+    justify-self: center;
+    margin-top: 24px;
+  }
+
+  /* 公開ページ(サイドバーはない) */
+  .public .sh-head .bio {
+    max-width: 40em;
+  }
+
+  /* 記録の入力: まん中のダイアログ */
+  .sheet {
+    top: 0;
+    bottom: 0;
+    left: var(--side-w);
+    width: min(600px, calc(100% - var(--side-w) - 48px));
+    height: min(700px, calc(100dvh - 64px));
+    max-width: none;
+    margin: auto;
+    border-radius: 24px;
+    box-shadow: 0 24px 60px rgba(20, 30, 20, 0.35);
+    animation: dialog-in 0.28s cubic-bezier(0.2, 0.9, 0.25, 1);
+  }
+
+  /* 公開ページには、サイドバーがない */
+  .app:not(.with-nav) .sheet {
+    left: 0;
+    width: min(600px, calc(100% - 48px));
+  }
+
+  .grab2 {
+    display: none;
+  }
+
+  .sheet .scroll {
+    padding: 0 28px 104px;
+  }
+
+  .shead {
+    margin: 0 -28px 18px;
+    padding: 28px 28px 0;
+  }
+
+  .shead .x {
+    right: 22px;
+    top: 24px;
+  }
+
+  .shead .x:hover {
+    background: #fff;
+  }
+
+  .save {
+    left: 28px;
+    right: 28px;
+    bottom: 24px;
+  }
+
+  .save:not(:disabled):hover {
+    background: #285d40;
+  }
+
+  .toast {
+    left: calc(50% + var(--side-w) / 2);
+    bottom: 32px;
+  }
+
+  .app:not(.with-nav) .toast {
+    left: 50%;
+  }
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
