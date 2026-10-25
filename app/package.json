@@ -8,7 +8,10 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "dev:worker": "npx wrangler@4 dev",
+    "db:migrate:local": "npx wrangler@4 d1 migrations apply DB --local",
+    "db:migrate": "npx wrangler@4 d1 migrations apply DB --remote"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",

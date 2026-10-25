@@ -10,6 +10,8 @@ import PaperPicker, { PaperCard } from './PaperPicker'
 interface Props {
   /** 渡すと、その記録を編集する。なければ新しく記録する */
   entryId?: string
+  /** 新しく記録するとき、論文が決まっていれば渡す(さがすから)。入力欄の代わりに、その論文を出す */
+  draft?: PaperDraft
   onClose: () => void
   /** 保存や削除がうまくいったときに、お知らせの文言を渡す */
   onDone?: (message: string) => void
@@ -34,11 +36,11 @@ function draftOf(entry: EntryRow): PaperDraft {
   }
 }
 
-export default function RecordSheet({ entryId, onClose, onDone }: Props) {
+export default function RecordSheet({ entryId, draft: given, onClose, onDone }: Props) {
   const records = useRecords()
   const entry = entryId ? records.entries.find((e) => e.id === entryId) : undefined
 
-  const [draft, setDraft] = useState<PaperDraft | null>(null)
+  const [draft, setDraft] = useState<PaperDraft | null>(given ?? null)
   const [depth, setDepth] = useState<Depth>(entry?.depth ?? 'deep')
   const [readOn, setReadOn] = useState(entry?.read_on ?? todayString())
   const [comment, setComment] = useState(entry?.comment ?? '')
@@ -109,7 +111,7 @@ export default function RecordSheet({ entryId, onClose, onDone }: Props) {
             </button>
           </div>
 
-          {entry ? <PaperCard draft={draftOf(entry)} /> : <PaperPicker onChange={setDraft} />}
+          {entry ? <PaperCard draft={draftOf(entry)} /> : given ? <PaperCard draft={given} /> : <PaperPicker onChange={setDraft} />}
 
           <div className="lb">読み方</div>
           <div className="seg" role="group" aria-label="読み方">

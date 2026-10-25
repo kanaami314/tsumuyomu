@@ -1,0 +1,9 @@
+# ローカルで Worker を動かすとき(npx wrangler@4 dev)の設定。.dev.vars に写して、値を入れる。
+# .dev.vars は Git に入れない。公開先には、wrangler secret put で入れる。
+SUPABASE_URL=
+SUPABASE_ANON_KEY=
+# 任意。なくても、OpenAlex の小さい匿名枠で使える
+OPENALEX_API_KEY=
+# AI(Gemini)を使うときだけ。無料枠のプロジェクト・モデルであることを、提供元で確かめてから
+GEMINI_API_KEY=
+AI_ENABLED=false
