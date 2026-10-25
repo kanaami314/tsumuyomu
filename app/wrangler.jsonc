@@ -14,7 +14,7 @@
     {
       "binding": "DB",
       "database_name": "tsumuyomu-search",
-      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "database_id": "428e7b82-6100-46bb-b326-89b5024b427d",
       "migrations_dir": "worker/migrations"
     }
   ],

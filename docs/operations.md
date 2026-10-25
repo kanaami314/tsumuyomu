@@ -131,6 +131,8 @@ PGHOST=127.0.0.1 PGPORT=5432 PGUSER=postgres bash supabase/tests/run.sh
 
 ### 初めて公開するとき(1 回だけ)
 
+**2026-10-25 に済ませた**(D1 `tsumuyomu-search` を APAC に作成、テーブル作成、`SUPABASE_URL` と `SUPABASE_ANON_KEY` を登録)。作り直すときの手順として残す。
+
 `app` で実行する。初めての PC では、先に `npx wrangler@4 login`。
 
 1. D1 のデータベースを作る。表示された `database_id` を、`app/wrangler.jsonc` の `REPLACE_WITH_D1_DATABASE_ID` と置き換える。
