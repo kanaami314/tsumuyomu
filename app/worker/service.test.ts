@@ -175,7 +175,15 @@ test('抄録の索引を、順に戻し、おかしな位置を捨てる', () =>
 })
 
 test('OpenAlex の論文を、表示と記録に使う形にする', () => {
-  const p = normalizeWork({ id: 'https://openalex.org/W1', display_name: 'T', doi: 'javascript:alert(1)', authorships: [{ author: { display_name: 'A B' } }] })
+  const p = normalizeWork({
+    id: 'https://openalex.org/W1',
+    display_name: 'T &amp; <i>U</i>',
+    doi: 'javascript:alert(1)',
+    authorships: [{ author: { display_name: 'A B' } }],
+    primary_location: { source: { display_name: 'Sexual &amp; Reproductive Healthcare' } },
+  })
+  expect(p.title).toBe('T & U')
+  expect(p.source).toBe('Sexual & Reproductive Healthcare')
   expect(p.url).toBe('')
   expect(p.authorList).toEqual(['A B'])
   expect(p.demo).toBe(false)

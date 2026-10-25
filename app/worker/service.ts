@@ -1,3 +1,4 @@
+import { cleanText } from '../src/lib/biblio'
 import { FIELD_LABELS, FIELDS, type Field } from '../src/lib/books'
 import { FIELD_QUERIES } from '../src/lib/search/fields'
 import { complete, validateExplanation, type Explanation } from '../src/lib/search/translation'
@@ -69,14 +70,14 @@ export function normalizeWork(w: any): SearchPaper {
   const names: string[] = (w.authorships ?? []).map((a: any) => a?.author?.display_name).filter((n: unknown) => typeof n === 'string')
   return {
     id: String(w.id),
-    title: w.display_name || w.title || '無題',
+    title: cleanText(String(w.display_name || w.title || '')) || '無題',
     year: String(w.publication_year || ''),
     date: w.publication_date || '',
     authors: names.slice(0, 4).join(', '),
     authorList: names.slice(0, 30),
     url: safeUrl(w.doi || w.primary_location?.landing_page_url || w.id),
     doi: typeof w.doi === 'string' ? w.doi : null,
-    source: w.primary_location?.source?.display_name || 'OpenAlex',
+    source: cleanText(String(w.primary_location?.source?.display_name || '')) || 'OpenAlex',
     abstract: reconstruct(w.abstract_inverted_index),
     topic: w.primary_topic?.display_name || '',
     field: w.primary_topic?.field?.display_name || '',
