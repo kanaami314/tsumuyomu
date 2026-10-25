@@ -151,6 +151,17 @@ describe('PaperService', () => {
     await expect(service.similar('https://openalex.org/W0', [])).rejects.toThrow(/見つかりません/)
   })
 
+  test('fetch を、Worker と同じく this なしで呼ぶ(Illegal invocation にならない)', async () => {
+    const { fetchImpl } = mockProvider()
+    // Worker の fetch は、別のオブジェクトのメソッドとして呼ぶと TypeError になる。それをまねる
+    const strictFetch = function (this: unknown, input: string | URL | Request, init?: RequestInit) {
+      if (this !== undefined && this !== globalThis) throw new TypeError('Illegal invocation')
+      return fetchImpl(input, init)
+    } as typeof fetch
+    const service = new PaperService(new MemoryStore(), config(), strictFetch)
+    await expect(service.search('autonomous')).resolves.toMatchObject({ papers: expect.any(Array) })
+  })
+
   test('入力を確かめる', async () => {
     const service = new PaperService(new MemoryStore(), config(), mockProvider().fetchImpl)
     await expect(service.search('')).rejects.toThrow(/1〜300文字/)

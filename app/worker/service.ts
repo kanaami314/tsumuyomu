@@ -144,7 +144,8 @@ export class PaperService {
   constructor(store: Store, config: ServiceConfig, fetchImpl: typeof fetch = fetch, now: () => number = Date.now) {
     this.store = store
     this.config = config
-    this.fetchImpl = fetchImpl
+    // fetch を this.fetchImpl(...) の形で呼ぶと、Worker では Illegal invocation になるので、包んでから持つ
+    this.fetchImpl = (input, init) => fetchImpl(input, init)
     this.now = now
   }
 
