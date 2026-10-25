@@ -1,4 +1,4 @@
-import { classifyField, lookupPaper, normalizeIdentifier, type Identifier, type PaperDraft } from '../biblio'
+import { classifyField, cleanText, lookupPaper, normalizeIdentifier, type Identifier, type PaperDraft } from '../biblio'
 import type { SearchPaper } from './types'
 
 // 見つけた論文を、記録の入力シートに渡す形(PaperDraft)にする
@@ -25,8 +25,8 @@ export function localDraft(p: SearchPaper): PaperDraft {
   return {
     doi: id?.doi ?? null,
     arxivId: id?.arxivId ?? null,
-    title: p.title,
-    authors: names.filter(Boolean).map(familyFirst),
+    title: cleanText(p.title),
+    authors: names.map(cleanText).filter(Boolean).map(familyFirst),
     year: Number.isInteger(year) && year > 0 ? year : null,
     venue,
     url: p.url || (id ? `https://doi.org/${id.doi}` : null),

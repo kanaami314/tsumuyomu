@@ -79,6 +79,20 @@ describe('fromCsl', () => {
     expect(draft.field).toBe('ml')
   })
 
+  it('題名・掲載誌名・著者の &amp; やタグを、ふつうの文字に戻す', () => {
+    const draft = fromCsl(
+      {
+        title: 'Habits &amp; <i>motivation</i>: a &#8220;review&#8221; &#x2013; 2&lt;3',
+        author: [{ family: 'O&#39;Brien', given: 'Ann' }],
+        'container-title': ['Sexual &amp; Reproductive Healthcare'],
+      },
+      '10.1016/j.srhc.2017.07.001',
+    )
+    expect(draft.title).toBe('Habits & motivation: a “review” – 2<3')
+    expect(draft.venue).toBe('Sexual & Reproductive Healthcare')
+    expect(draft.authors).toEqual(["O'Brien, Ann"])
+  })
+
   it('団体名や、年のないものも落ちない', () => {
     const draft = fromCsl({ title: ['憲法調査会総会議事録'], author: [{ given: '憲法調査会' }] }, '10.11501/3048327')
     expect(draft.authors).toEqual(['憲法調査会'])

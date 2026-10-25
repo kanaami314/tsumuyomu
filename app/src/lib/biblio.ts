@@ -67,9 +67,31 @@ export interface Csl {
   subject?: string[]
 }
 
+const ENTITIES: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' }
+
+/**
+ * 書誌の文字を整える。Crossref などは、題名や掲載誌名に「&amp;」や <i>…</i> を、そのまま入れてくることがある。
+ * タグを外してから、文字の参照(&amp; &#39; &#x2013; など)を戻す(戻した < > を、タグとして消さないように)。
+ */
+export function cleanText(text: string): string {
+  return text
+    .replace(/<\/?[a-z][a-z0-9:-]*(?:\s[^<>]*)?\/?>/gi, '')
+    .replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (whole, ref: string) => {
+      const lower = ref.toLowerCase()
+      if (lower.startsWith('#')) {
+        const code = lower.startsWith('#x') ? parseInt(lower.slice(2), 16) : parseInt(lower.slice(1), 10)
+        return code > 0 && code <= 0x10ffff ? String.fromCodePoint(code) : whole
+      }
+      return ENTITIES[lower] ?? whole
+    })
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 const first = (v: string | string[] | undefined): string | null => {
   const s = Array.isArray(v) ? v[0] : v
-  return s && s.trim() ? s.trim() : null
+  const cleaned = s ? cleanText(s) : ''
+  return cleaned || null
 }
 
 const RULES: [Field, RegExp][] = [
@@ -98,6 +120,7 @@ export function fromCsl(csl: Csl, doi: string): PaperDraft {
       if (a.family) return a.given ? `${a.family}, ${a.given}` : a.family
       return a.literal ?? a.name ?? a.given ?? ''
     })
+    .map(cleanText)
     .filter(Boolean)
   const rawYear = csl.issued?.['date-parts']?.[0]?.[0]
   const year = Number.isInteger(Number(rawYear)) && Number(rawYear) > 0 ? Number(rawYear) : null
