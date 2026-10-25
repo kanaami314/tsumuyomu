@@ -159,6 +159,8 @@ PGHOST=127.0.0.1 PGPORT=5432 PGUSER=postgres bash supabase/tests/run.sh
 
 ### AI(日本語の説明)を使う
 
+**2026-10-25 に有効にした**(`GEMINI_API_KEY` を登録し、`AI_ENABLED` を `"true"` に)。止めるときは、`AI_ENABLED` を `"false"` にして公開する。
+
 1. Gemini の API キーを、**無料枠のプロジェクト**で作る。利用するモデルが無料枠であることを、提供元で確かめる(アプリからは、課金の設定を確かめられない)。
 2. `npx wrangler@4 secret put GEMINI_API_KEY`
 3. `app/wrangler.jsonc` の `vars` で、`AI_ENABLED` を `"true"` にして、公開する。上限やモデルも、ここで変える。

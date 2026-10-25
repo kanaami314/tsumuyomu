@@ -20,7 +20,7 @@
   ],
   // 秘密でない設定。キー(GEMINI_API_KEY など)は、wrangler secret put で入れる
   "vars": {
-    "AI_ENABLED": "false",
+    "AI_ENABLED": "true",
     "GEMINI_MODEL": "gemini-3.1-flash-lite",
     "AI_DAILY_LIMIT": "20",
     "OPENALEX_DAILY_LIMIT": "50"
