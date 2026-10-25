@@ -100,7 +100,8 @@ PGHOST=127.0.0.1 PGPORT=5432 PGUSER=postgres bash supabase/tests/run.sh
    ```
 
    - 初めての PC では、先に `npx wrangler@4 login` で、Cloudflare にログインする。
-   - 公開の設定は `app/wrangler.jsonc`(`dist` を、そのまま配信する)。
+   - 公開の設定は `app/wrangler.jsonc`(`dist` を配信し、`/api/` だけを Worker で扱う)。
+   - さがすの DB(D1)を変えたときは、公開の前に `npm run db:migrate` も実行する(下の「8. 論文さがし」)。
 4. https://tsumuyomu.314159265yy3y.workers.dev を開いて、変更が出ているか確かめる。
    - 公開の履歴は `npx wrangler@4 deployments list` で見られる。前の版に戻すときは `npx wrangler@4 rollback`。
 
@@ -117,3 +118,58 @@ PGHOST=127.0.0.1 PGPORT=5432 PGUSER=postgres bash supabase/tests/run.sh
 - 公開ページ(`/u/ユーザー名`)は、検索エンジンに出さない設定(noindex)。公開した記録は、リンクを知っている人なら、誰でも見られる。
 - 生成画像(`design/assets/`)を、配布・公開するときは、使った生成サービスの規約を確認する。
 - 日本の論文(JaLC の DOI)は、ブラウザから書誌情報を取れないので、手入力になる。
+
+## 8. 論文さがし(さがすタブ)
+
+元は、別に作った「論文サーチャー(Paper Compass)」(`E:\論文サーチャー`)。その検索・おすすめ・類似・日本語の説明を、Worker(`app/worker/`)と画面(`app/src/components/SearchScreen.tsx`)に移した。
+
+- 外部 API: **OpenAlex**(論文の検索と抄録。キーなしでも、小さい匿名枠で使える)、**Gemini**(検索語の英訳と、日本語の説明。任意)。
+- キャッシュと、日ごとの呼び出し回数は、**Cloudflare D1**(無料枠の SQLite)。OpenAlex の結果は 1 日、論文と説明は 30 日で期限切れ。
+- 日次の上限(`OPENALEX_DAILY_LIMIT`、`AI_DAILY_LIMIT`)は、**利用者全員で共通**。UTC の日付で数える。上限に達すると、その日は新しい呼び出しを止める(キャッシュ済みの結果は見られる)。有料枠へ切り替える処理はない。
+- 使えるのは、ログインして、招待コードで登録を済ませた人だけ(Worker が Supabase に問い合わせて確かめる)。
+- 探索の経路、あとで読む、関心分野は、ブラウザーの localStorage(利用者ごとに分ける)。端末をまたいでは引き継がない。
+
+### 初めて公開するとき(1 回だけ)
+
+`app` で実行する。初めての PC では、先に `npx wrangler@4 login`。
+
+1. D1 のデータベースを作る。表示された `database_id` を、`app/wrangler.jsonc` の `REPLACE_WITH_D1_DATABASE_ID` と置き換える。
+
+   ```bash
+   npx wrangler@4 d1 create tsumuyomu-search
+   ```
+
+2. テーブルを作る。
+
+   ```bash
+   npm run db:migrate
+   ```
+
+3. Worker の秘密の設定を入れる(値は、聞かれたときに貼る。チャットやリポジトリには書かない)。
+
+   ```bash
+   npx wrangler@4 secret put SUPABASE_URL        # app/.env.local の VITE_SUPABASE_URL と同じ
+   npx wrangler@4 secret put SUPABASE_ANON_KEY   # app/.env.local の VITE_SUPABASE_ANON_KEY と同じ(公開用キー)
+   npx wrangler@4 secret put OPENALEX_API_KEY    # 任意。OpenAlex の無料アカウントの枠を使うとき
+   ```
+
+4. いつもどおり、ビルドして公開する(「6. 公開」)。
+
+### AI(日本語の説明)を使う
+
+1. Gemini の API キーを、**無料枠のプロジェクト**で作る。利用するモデルが無料枠であることを、提供元で確かめる(アプリからは、課金の設定を確かめられない)。
+2. `npx wrangler@4 secret put GEMINI_API_KEY`
+3. `app/wrangler.jsonc` の `vars` で、`AI_ENABLED` を `"true"` にして、公開する。上限やモデルも、ここで変える。
+- AI 無料枠では、入力と出力が、製品の改善に使われることがある。送るのは、検索語と、公開されている抄録だけ。
+- AI がないときは、検索語を、簡単な辞書で英語に変える(`worker/service.ts` の `DICTIONARY`)。辞書にない日本語は、そのまま OpenAlex に渡るので、見つかりにくい。
+
+### 使い方を見る
+
+```bash
+npx wrangler@4 d1 execute tsumuyomu-search --remote --command "select * from usage order by day desc limit 10"
+```
+
+### 制約
+- 類似のラベルは、候補を探した観点。手法が同じことを保証しない。
+- 「新着」は過去 1 年の公開日順で、流行の判定ではない。
+- 無料の Workers は、1 回の処理の CPU 時間が短い(10ms)。OpenAlex の結果の読み込みが重いときに、まれに失敗することがある。続くようなら、取得件数(40 件)を減らす。

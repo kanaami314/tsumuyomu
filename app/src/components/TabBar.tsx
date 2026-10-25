@@ -1,6 +1,6 @@
 import Icon, { type IconName } from './Icon'
 
-export type TabId = 'home' | 'shelf' | 'review' | 'mypage'
+export type TabId = 'home' | 'search' | 'shelf' | 'review' | 'mypage'
 
 interface Props {
   current: TabId
@@ -16,6 +16,7 @@ interface TabDef {
 
 const LEFT: TabDef[] = [
   { id: 'home', icon: 'home', label: 'ホーム' },
+  { id: 'search', icon: 'search', label: 'さがす' },
   { id: 'shelf', icon: 'books', label: '書棚' },
 ]
 const RIGHT: TabDef[] = [

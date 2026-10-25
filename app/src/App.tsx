@@ -6,10 +6,12 @@ import Placeholder from './components/Placeholder'
 import PublicPage from './components/PublicPage'
 import RecordSheet from './components/RecordSheet'
 import ReviewScreen from './components/ReviewScreen'
+import SearchScreen from './components/SearchScreen'
 import ShelfScreen from './components/ShelfScreen'
 import TabBar, { type TabId } from './components/TabBar'
 import Toast from './components/Toast'
 import { AuthProvider, useAuth } from './lib/auth'
+import type { PaperDraft } from './lib/biblio'
 import { parsePublicPath } from './lib/publicView'
 import { RecordsProvider, useRecords } from './lib/RecordsContext'
 import { supabase } from './lib/supabase'
@@ -39,8 +41,8 @@ function Banner() {
   return null
 }
 
-/** 記録の入力シート。entryId があれば、その記録を直す */
-type Sheet = { entryId?: string } | null
+/** 記録の入力シート。entryId があれば、その記録を直す。draft があれば、その論文を記録する(さがすから) */
+type Sheet = { entryId?: string; draft?: PaperDraft } | null
 
 function Main({ signedIn }: { signedIn: boolean }) {
   const [tab, setTab] = useState<TabId>('home')
@@ -50,11 +52,13 @@ function Main({ signedIn }: { signedIn: boolean }) {
 
   const record = () => setSheet({})
   const open = (entryId: string) => setSheet({ entryId })
+  const recordPaper = (draft: PaperDraft) => setSheet({ draft })
 
   return (
     <div className="app with-nav">
       <Banner />
       {tab === 'home' && <HomeScreen onRecord={record} onOpen={open} />}
+      {tab === 'search' && <SearchScreen onRecord={recordPaper} onOpen={open} onToast={setToast} />}
       {tab === 'shelf' && <ShelfScreen onOpen={open} />}
       {tab === 'review' && <ReviewScreen onOpen={open} />}
       {tab === 'mypage' &&
@@ -66,7 +70,11 @@ function Main({ signedIn }: { signedIn: boolean }) {
       <TabBar current={tab} onSelect={setTab} onRecord={record} />
       {/* 開くたびに作り直して、前の入力を引きずらない */}
       {sheet && (
-        <RecordSheet key={sheet.entryId ?? 'new'} entryId={sheet.entryId} onClose={() => setSheet(null)} onDone={setToast} />
+        <RecordSheet
+          key={sheet.entryId ?? sheet.draft?.title ?? 'new'}
+          entryId={sheet.entryId}
+          draft={sheet.draft}
+          onClose={() => setSheet(null)} onDone={setToast} />
       )}
       {toast && <Toast key={toast} message={toast} onDone={clearToast} />}
     </div>
